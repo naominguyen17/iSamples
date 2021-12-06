@@ -30,3 +30,14 @@ cat /path/to/plantSamples.sql | mysql -h fel.ddns.net -u iSamplesBackend -pBdZZD
 
 Note that the tables should be set up already, so no need to set it up back again
 
+# How to run the node.js backend
+
+Make sure node.js is installed.
+
+```
+node app.js
+```
+
+# Backend interface:
+
+Connecting to this with p
