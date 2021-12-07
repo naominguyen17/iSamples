@@ -8,9 +8,11 @@ SET time_zone = "+00:00";
 -- Database: PlantSamples
 --
 
+
 -- 
 -- Table structure for table `LiteralCharacterValues`
 --
+-- Should be made to view instead.
 
 CREATE TABLE LiteralCharacterValues (
   `PlantName` varchar(10),

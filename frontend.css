@@ -1,0 +1,15 @@
+table {
+    color: #000000;
+}
+body {
+    font-family: Arial;
+}
+tr {
+    background-color: #ffffff;
+}
+td {
+    background-color: #ffffff;
+}
+table, th, td {
+    border: 1px solid black
+}
