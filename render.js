@@ -48,26 +48,35 @@ function makeTreeList(data, treeID) {
     //     PlantB: {}
     //}
     //}
-    let marginXPerDepth = 10;
-    var treeul = d3.select(treeID).append("ul")
-                   .classed("treelist", "true");
+    function makeElem(node, elemOverride=null, nameOverride=null) {
+        let parent = elemOverride||node.parent[node.parent.length-1].elem;
+        let name = nameOverride || node.name;
+        let retval = parent.append("ul").append("li");
+        if(!node.isLeaf) {
+            retval.attr("class", "parent_li");
+        }
+        retval.append("span").text(name);
+        return retval;
+    } 
+    var treeul = d3.select(treeID);
     var leaves = [];
-    const depth = 4;
     var root = {name: "root", data: data, parent: [], children: undefined, leafParent: false};
-    var nodes = [root,
+    root.elem = makeElem(root, treeul, "root");
+    let nodes = [root,
                  {name: "AllPlants", data: data, parent: [root], children: Object.entries(data["AllPlants"]),
                 leafParent: false}];
+    nodes[1].elem = makeElem(nodes[1]);
     let visitOrder = [];
     while(nodes.length > 1) {
         let v = nodes.pop();
-        let vName=v.name;
-        let vParent=v.parent;
         let vData=v.data[v.name];
         let vChildren = v.children;
         visitOrder.push(v);
-        if(vParent[vParent.length-1].leafParent) {
+        // use the parent information to push self
+        if(v.parent[v.parent.length-1].leafParent) {
             // is leaf
             console.log(v, "isLeaf");
+            v.isLeaf = true;
             leaves.push(v);
             continue;
         }
@@ -81,20 +90,15 @@ function makeTreeList(data, treeID) {
                 {name:entry, data: vData, children: [], leafParent:false}
                 :{name: key, data: vData, children: nChildren,
                 leafParent: parentOfLeaf};
-            child.parent = vParent.slice();
+            child.parent = v.parent.slice();
             child.parent.push(v);
+            child.elem = makeElem(child);
             nodes.push(child);
         }
-
     }
+    // now leaves contains all the leaves
+    // visitOrder is precisely how we should render it out
     console.log(visitOrder);
     console.log("leaves", leaves);
-    var ulSelects = treeul.selectAll("li").data(visitOrder);
-    ulSelects.exit().remove();
-    ulSelects.join("li").text((d)=>d.name)
-        .attr("transform", (d)=>{
-            let txt = "translate("+(marginXPerDepth*d.parent.length)+")";
-            console.log(d.name, txt);
-            return txt;
-        });
+    return [leaves, visitOrder, treeul]
 }
