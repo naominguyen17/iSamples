@@ -10,31 +10,33 @@ var colNames;
 var leafElems = [];
 var leafLookup = {};
 var cellLookup = {};
+var nodes;
+var selectedKey = null;
 
+function updateHighlighting(selectedKey, nodes, leaves) {
+    console.log(selectedKey);
+    leaves.map((leaf)=> {
+        let key = keyfn(leaf.parent[2].name,
+            leaf.parent[3].name, leaf.parent[4].name);
+        function highlight(color) {return selectedKey == key? color: null;}
+        leaf.elem.style("color", highlight("blue"));
+    });
+    function highlight(color, key) {return selectedKey == key? color: null;}
+    nodes.style("color", (d)=> {
+        return highlight("blue", keyfn(d.row.PlantName,
+            d.col));
+    });
+}
 
 function handleTableNodeOnClick(cells, colNames) {
     // filter out non-plantname cells
-    let nodes = cells.filter((d)=> {
+    nodes = cells.filter((d)=> {
         return (d.col != colNames[0]);
-    });
-    nodes.each((d)=> {
-        let self = d3.select(this);
-        let key = keyfn(d.row.PlantName,
-            d.col);
-        cellLookup[key] = self;
     });
     nodes.on("click", (d) => {
         let datum = d.target.__data__;
-        let self = nodes.filter((d)=>d == datum);
-        // unset style of others
-        nodes.style("color", null)
-             .style("border-color", null);
-        self.style("color", "blue")
-            .style("border-color", "blue");
-        // dispatch
-        let leaf = leafLookup[keyfn(datum.row.PlantName, datum.col)];
-        leaf.dispatch("click");
-        console.log("dispatch", leaf);
+        selectedKey = keyfn(datum.row.PlantName, datum.col);
+        updateHighlighting(selectedKey, nodes, leaves);
     });
 }
 function keyfn(plant, part, char=null) {
@@ -46,15 +48,9 @@ function handleTreeOnClick(leaves) {
         leafElems.push(leaf.elem);
         let key = keyfn(leaf.parent[2].name,
             leaf.parent[3].name, leaf.parent[4].name);
-        console.log(key, leaf.elem);
-        leafLookup[key] = leaf.elem;
         leaf.elem.on("click", (d) => {
-            let self = leaf.elem;
-            let datum = leaf;
-            leafElems.forEach((elem)=>elem.style("color",null));
-            self.style("color", "blue");
-            cellLookup[key]
-                .dispatch("click");
+            selectedKey = key;
+            updateHighlighting(selectedKey, nodes, leaves);
         });
     });
 }
