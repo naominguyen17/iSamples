@@ -1,4 +1,6 @@
 // helper file to render images related to front end
+
+
 // param data: [{PlantName: "PlantA", Leaf_Color: "Green",...},...]
 // param columnNames: array of columns we want to display (["PlantName", "Leaf_Color",...])
 // param tableID: the tableID of the space we created in index.html

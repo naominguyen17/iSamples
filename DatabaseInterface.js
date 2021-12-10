@@ -1,7 +1,13 @@
+// The interface to interact with the backend app
+//
+//
+
 // const DEFAULT_WEB = "http://192.168.0.39:3000";
 const DEFAULT_WEB = "http://fel.ddns.net:3000";
 const DEFAULT_URL = DEFAULT_WEB+"/data/list";
 const DEFAULT_HIEARCHY_URL = DEFAULT_WEB+"/data/hierarchy";
+
+// Acquire the list database
 // onLoaded: function(err, responseJSON)
 function getDatabaseJSON(onLoaded, reqURL = DEFAULT_URL) {
     let req = new XMLHttpRequest();
